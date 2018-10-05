@@ -53,8 +53,8 @@ export class TapeRoller {
     return files.map(sourceFile => new TapeRoller({ targetDirectory, sourceFile }));
   }
 
-  public rename (oldPath: string, newPath: string): this {
-    fs.renameSync(oldPath, newPath);
+  public async rename (oldPath: string, newPath: string): Promise<this> {
+    await promisify(fs.rename)(oldPath, newPath);
 
     return this;
   }
@@ -93,8 +93,8 @@ export class TapeRoller {
     this.stream.on('error', (error) => console.error('Write error: ', error));
 
     if (temp) {
-      this.stream.on('close', () => {
-        this.rename(fullPath, `${path}/${this.targetFile}`);
+      this.stream.on('close', async () => {
+        await this.rename(fullPath, `${path}/${this.targetFile}`);
       });
     }
 

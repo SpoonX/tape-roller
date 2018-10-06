@@ -7,6 +7,7 @@ import { exec, spawn } from 'child_process';
 import rimraf from 'rimraf';
 import mkdirp from 'mkdirp';
 import glob from 'glob';
+import hasYarn from 'has-yarn';
 
 export type ConfigType = Partial<{
   sourceDirectory: string,
@@ -195,7 +196,8 @@ export class TapeRoller {
   }
 
   private installDependencies (path: string): this {
-    const process = exec(`yarn --cwd ${path} install`);
+    const command = hasYarn() ? `yarn --cwd ${path} install` : `npm i --cwd ${path} --prefix ${path}`;
+    const process = exec(command);
 
     process.on('close', (status: number) => {
       if (status !== 0) {

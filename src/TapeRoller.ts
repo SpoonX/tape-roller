@@ -28,9 +28,9 @@ export type StreamType = fs.ReadStream | fs.WriteStream;
 export class TapeRoller {
   private readonly sourceDirectory?: string;
 
-  private sourceFile?: string;
-
   private readonly targetDirectory?: string;
+
+  private sourceFile?: string;
 
   private targetFile?: string;
 
@@ -80,7 +80,7 @@ export class TapeRoller {
     return this;
   }
 
-  public write (file?: string, temp?: boolean): this {
+  public async write (file?: string, temp?: boolean): Promise<this> {
     if (file) {
       this.targetFile = file;
     }
@@ -89,11 +89,11 @@ export class TapeRoller {
     const path     = TapeRoller.resolvePath(this.targetDirectory);
     const fullPath = join(path, fileName);
 
-    mkdirp.sync(this.targetDirectory);
+    if (this.targetDirectory) {
+      await promisify(mkdirp)(this.targetDirectory);
+    }
 
     this.stream = this.stream.pipe(fs.createWriteStream(fullPath));
-
-    this.stream.on('error', (error) => console.error('Write error: ', error));
 
     if (temp) {
       this.stream.on('close', async () => {
@@ -104,7 +104,7 @@ export class TapeRoller {
     return this;
   }
 
-  public copy (source?: string, target?: string): this {
+  public async copy (source?: string, target?: string): Promise<this> {
     if (source) {
       this.sourceFile = source;
     }
@@ -117,7 +117,7 @@ export class TapeRoller {
       this.read();
     }
 
-    this.write();
+    await this.write();
 
     return this;
   }

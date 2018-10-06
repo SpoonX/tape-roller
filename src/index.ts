@@ -1,3 +1,1 @@
-import { TapeRoller } from './TapeRoller';
-
-export default TapeRoller;
+export * from './TapeRoller';

@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 import { promisify } from 'util';
 import streamReplace from 'stream-replace';
 import { Homefront } from 'homefront';
@@ -84,7 +84,7 @@ export class TapeRoller {
 
     const fileName = temp ? `__temp__${this.targetFile}` : this.targetFile;
     const path     = TapeRoller.resolvePath(this.targetDirectory);
-    const fullPath = `${path}/${fileName}`;
+    const fullPath = join(path, fileName);
 
     mkdirp.sync(this.targetDirectory);
 
@@ -94,7 +94,7 @@ export class TapeRoller {
 
     if (temp) {
       this.stream.on('close', async () => {
-        await this.rename(fullPath, `${path}/${this.targetFile}`);
+        await this.rename(fullPath, join(path, this.targetFile));
       });
     }
 
@@ -176,14 +176,14 @@ export class TapeRoller {
 
     const process = spawn('git', args, { cwd });
     const name    = projectName || repository.match(/\/([\w-_]+)\.git$/)[1];
-    const path    = cwd ? `./${cwd}/${name}` : `./${name}`;
+    const path    = cwd ? join(cwd, name) : name;
 
     process.on('close', (status: number) => {
       if (status !== 0) {
         return;
       }
 
-      this.remove(`${path}/.git`, true);
+      this.remove(join(path, '.git'), true);
       this.installDependencies(path);
     });
 

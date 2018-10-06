@@ -73,7 +73,9 @@ export class TapeRoller {
 
     this.stream = fs.createReadStream(path);
 
-    this.stream.on('error', (error) => console.error('Read error: ', error));
+    this.stream.on('error', (error) => {
+      throw new Error(error.message);
+    });
 
     return this;
   }
@@ -122,7 +124,7 @@ export class TapeRoller {
 
   public replace (parameters: { [key: string]: any }) {
     if (!this.stream) {
-      this.read();
+      throw new Error('No read stream found. Did you forget to call ".read()"?')
     }
 
     const params  = new Homefront(parameters);
@@ -188,8 +190,8 @@ export class TapeRoller {
       this.installDependencies(path);
     });
 
-    process.on('error', (error: { code: string }) => {
-      console.log('Could not clone repository ' + repository);
+    process.on('error', (error) => {
+      throw new Error(error.message);
     });
 
     return this;
@@ -208,8 +210,8 @@ export class TapeRoller {
       return this;
     });
 
-    process.on('error', () => {
-      console.error('Could not install dependencies');
+    process.on('error', (error) => {
+      throw new Error(error.message);
     });
 
     return this;
@@ -224,7 +226,7 @@ export class TapeRoller {
           throw new Error('Cannot remove directory if recursive is false');
         }
 
-        return console.error(error);
+        throw new Error(error.message);
       }
 
       return console.log('Removed file ' + path);
@@ -236,7 +238,7 @@ export class TapeRoller {
   private removeDir (path: string): this {
     rimraf(path, (error) => {
       if (error) {
-        console.error(error);
+        throw new Error(error.message);
       }
     });
 

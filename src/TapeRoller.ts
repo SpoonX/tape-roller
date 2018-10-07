@@ -51,7 +51,36 @@ export class TapeRoller {
     const asyncGlob = promisify(glob);
     const files     = await asyncGlob(pattern, options);
 
-    return files.map(sourceFile => new TapeRoller({ targetDirectory, sourceFile }));
+    return files.map((sourceFile: string) => new TapeRoller({ targetDirectory, sourceFile }));
+  }
+
+  public static async addDep (dependency: string, dev?: boolean, cwd?: string): Promise<void> {
+    const yarn = hasYarn();
+    let command = yarn
+      ? `yarn add ${dependency}`
+      : `npm install ${dependency} ${!dev ? '--save' : ''}`;
+
+    if (cwd) {
+      command += yarn ? ` --cwd ${cwd}` : ` --cwd ${cwd} --prefix ${cwd}`;
+    }
+
+    if (dev) {
+      command += ' -D';
+    }
+
+    const process = exec(command);
+
+    process.on('error', (error) => {
+      throw new Error(error.message);
+    });
+
+    process.on('close', (status: number) => {
+      if (status !== 0) {
+        throw new Error(`Adding dependency failed (${status}).\nGot error: ${process.stderr}`);
+      }
+
+      console.log(`Added dependency: ${dependency}`);
+    });
   }
 
   public async rename (oldPath: string, newPath: string): Promise<this> {
@@ -124,7 +153,7 @@ export class TapeRoller {
 
   public replace (parameters: { [key: string]: any }) {
     if (!this.stream) {
-      throw new Error('No read stream found. Did you forget to call ".read()"?')
+      throw new Error('No read stream found. Did you forget to call ".read()"?');
     }
 
     const params  = new Homefront(parameters);
@@ -207,7 +236,6 @@ export class TapeRoller {
       }
 
       console.log('Installed dependencies');
-      return this;
     });
 
     process.on('error', (error) => {

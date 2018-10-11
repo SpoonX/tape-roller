@@ -44,7 +44,7 @@ export class TapeRoller {
   }
 
   private static resolvePath (dir?: string, file?: string): string {
-    return resolve(process.cwd(), dir || '', file || '');
+    return resolve(dir || '', file || '');
   }
 
   public static async fromGlob (pattern: string, options?: { [key: string]: any }, targetDirectory?: string): Promise<TapeRoller[]> {
@@ -119,18 +119,25 @@ export class TapeRoller {
     const fullPath = join(path, fileName);
 
     if (this.targetDirectory) {
+      // @todo move
       await promisify(mkdirp)(this.targetDirectory);
     }
 
-    this.stream = this.stream.pipe(fs.createWriteStream(fullPath));
+    const writeStream = fs.createWriteStream(fullPath);
 
+    // @todo move
     if (temp) {
-      this.stream.on('close', async () => {
+      writeStream.on('close', async () => {
         await this.rename(fullPath, join(path, this.targetFile));
       });
     }
 
-    return this;
+    this.stream.pipe(writeStream);
+
+    return new Promise<this>((resolve, reject) => {
+      writeStream.on('error', reject);
+      writeStream.on('finish', () => resolve(this));
+    });
   }
 
   public async copy (source?: string, target?: string): Promise<this> {
@@ -142,11 +149,7 @@ export class TapeRoller {
       this.targetFile = target;
     }
 
-    if (!this.stream) {
-      this.read();
-    }
-
-    await this.write();
+    await this.read().write();
 
     return this;
   }

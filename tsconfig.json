@@ -1,0 +1,17 @@
+{
+  "include": [
+    "src/**/*"
+  ],
+  "compilerOptions": {
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "declaration": true,
+    "sourceMap": true,
+    "target": "es2017",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "declarationDir": "./dist",
+    "outDir": "./dist",
+    "typeRoots": ["./src/types", "node_modules"]
+  }
+}

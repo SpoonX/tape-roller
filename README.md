@@ -19,7 +19,3 @@ tapeRoller
   .replace({ moduleName, year: new Date().getFullYear() })
   .write(path.resolve('module', moduleName));
 ```
-
-## todo
-
-rename sourceDirectory to templateDirectory. Not all the same thing.

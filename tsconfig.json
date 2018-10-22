@@ -12,6 +12,8 @@
     "moduleResolution": "node",
     "declarationDir": "./dist",
     "outDir": "./dist",
-    "typeRoots": ["./src/types", "node_modules"]
+    "typeRoots": [
+      "./types", "node_modules/@types"
+    ]
   }
 }

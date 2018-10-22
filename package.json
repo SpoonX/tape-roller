@@ -1,6 +1,6 @@
 {
   "name": "tape-roller",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -14,7 +14,11 @@
     "version": "conventional-changelog -p angular -i doc/CHANGELOG.md -s && git add -A doc/CHANGELOG.md",
     "postpublish": "git push upstream master && git push upstream --tags"
   },
-  "keywords": [ "cli", "code", "generator" ],
+  "keywords": [
+    "cli",
+    "code",
+    "generator"
+  ],
   "dependencies": {
     "debug": "^4.1.0",
     "glob": "^7.1.3",

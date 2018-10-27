@@ -80,7 +80,7 @@ export class FileTask {
   }
 
   public modify (pattern: RegExp, { append, prepend, custom, replace }: ModifyType): this {
-    const transformer = (match: string, parameter: string, defaultValue: string): string => {
+    const transformer = (match: string, ...rest: string[]): string => {
       if (typeof replace !== 'undefined') {
         return replace;
       }
@@ -94,7 +94,7 @@ export class FileTask {
       }
 
       if (typeof custom === 'function') {
-        return custom(match, parameter, defaultValue);
+        return custom(match, ...rest);
       }
 
       return match;

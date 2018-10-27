@@ -1,3 +1,13 @@
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/SpoonX/tape-roller/compare/v2.0.0...v2.0.1) (2018-10-27)
+
+
+### Bug Fixes
+
+* **FileTask:** fix support for custom matches ([9c91970](https://github.com/SpoonX/tape-roller/commit/9c91970))
+
+
+
 <a name="2.0.0"></a>
 # 2.0.0 (2018-10-22)
 
